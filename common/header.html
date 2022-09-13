@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./init.css">
+    <link rel="stylesheet" href="./header.css">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="./element.css">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 引入组件库 -->
+    <script src="./element.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app" style="width: 100%;">
+        <!-- 顶部工具栏 -->
+        <div class="h-top">
+            <div class="h-top-1">
+                <a href="">
+                    <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/art_of_silk_and_wood_1/u76.png?pageId=97212150-f184-422c-8e55-66969458d015"
+                        alt="">
+                </a>
+            </div>
+            <div class="h-top-2">
+                <div class="h-top2-line1"></div>
+                <div class="h-top2-line2"></div>
+                <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u85.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                    alt="">
+                <span>香港公共图书馆</span>
+                <div class="h-top2-below">
+                    <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u80.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                </div>
+            </div>
+            <div class="h-top-3">
+                <span>字体大小</span>
+                <a href="javascript:;">
+                    <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u75.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                </a>
+            </div>
+            <div class="h-top-4">
+                <div class="h-top2-line1"></div>
+                <div class="h-top2-line2"></div>
+                <div class="h-top4-img">
+                    <a href="javascript:;">
+                        <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u108.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                            alt="">
+                    </a>
+                </div>
+            </div>
+            <div class="h-top-5">
+                <div class="h-top5-img">
+                    <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u87.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <span>English</span>
+                </div>
+                <div class="h-top5-below">
+                    <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u80.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                </div>
+            </div>
+        </div>
+        <!-- 顶部导航栏 -->
+        <div class="h-nav">
+            <div class="h-nav-item1">
+                <a href="javascript:;">
+                    <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/advanced_search-d/u56.png?pageId=62f302df-5d47-499f-a5d7-7873fb691e9e"
+                        alt="">
+                </a>
+            </div>
+            <div class="h-nav-item2">
+                <a href="javascript:;" class="h-navItem">
+                    <img class="h-biasImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u62.svg?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <img class="h-navImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u46.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <p>收藏品</p>
+                </a>
+                <a href="javascript:;" class="h-navItem">
+                    <img class="h-biasImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u62.svg?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <img class="h-navImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u47.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <p>展览</p>
+                </a>
+                <a href="javascript:;" class="h-navItem">
+                    <img class="h-biasImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u62.svg?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <img class="h-navImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u48.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <p>口述历史</p>
+                </a>
+                <a href="javascript:;" class="h-navItem">
+                    <img class="h-biasImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u62.svg?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <img class="h-navImg"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/search_result-n/u49.png?pageId=e6658438-94f2-4eee-b13f-1b7b47c15192"
+                        alt="">
+                    <p>关于香港记忆</p>
+                </a>
+            </div>
+            <div class="h-nav-item3">
+                <div class="h-navItem3-title">
+                    <a class="h-navItem3-night" href="javascript:;">
+                        <img style="width:30px;height:30px;"
+                            src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/advanced_search-n/u39.png?pageId=86b071c9-6fdf-4512-8dc1-71d970899a13"
+                            alt="">
+                        <p>NIGHT</p>
+                    </a>
+                    <a class="advanced-search" href="javascript:;">Advanced Search</a>
+                </div>
+                <div class="h-navItem3-search">
+                    <el-input placeholder="搜索" suffix-icon="el-icon-search"></el-input>
+                </div>
+            </div>
+            <!-- 移动端顶部导航栏 -->
+            <div class="h-nav-mobile">
+                <div class="mobile-item">
+                    <i class="el-icon-search mobile-icon-search"></i>
+                    <img style="width:60px;height:60px"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/advanced_search-n_1/u143.svg?pageId=65fc944f-2935-4045-8a4c-7545db106918"
+                        alt="">
+                </div>
+                <div class="mobile-item">
+                    <i class="el-icon-s-fold mobile-icon-fold"></i>
+                    <img style="width:60px;height:60px"
+                        src="https://d1icd6shlvmxi6.cloudfront.net/gsc/4373C5/36/5e/29/365e29c04d8a45c199a14b927aa8b4db/images/advanced_search-n_1/u85.svg?pageId=65fc944f-2935-4045-8a4c-7545db106918"
+                        alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!'
+            }
+        })
+        console.log();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,236 @@
+.booking-detail {
+  padding: 0 70px 0 35px;
+}
+.booking-detail .detail {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.booking-detail .detail-title {
+  font-family: Segoe UI-Bold, Segoe UI;
+  font-size: 20px;
+  line-height: 20px;
+  padding: 15px 5px;
+  font-weight: bold;
+  color: #096BCC;
+}
+.booking-detail .detail-box {
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  padding: 13px 20px;
+  background: #FFFFFF;
+  box-shadow: 0px 3px 6px 1px rgba(104, 151, 177, 0.2);
+}
+.booking-detail .detail-box-img {
+  height: 130.47px;
+}
+.booking-detail .detail-box-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.booking-detail .detail-box-info .info-box {
+  margin-left: 30px;
+  margin-right: 65px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.booking-detail .detail-box-info .info-box-label {
+  margin: 5px 0 5px 0;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-family: Segoe UI-Bold, Segoe UI;
+  font-weight: bold;
+  color: #096BCC;
+}
+.booking-detail .detail-box-info .info-box-value {
+  margin: 5px 0 10px 0;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-family: Segoe UI-Bold, Segoe UI;
+  font-weight: bold;
+  color: #000000;
+}
+.booking-detail .detail-box-info .info-box:not(:last-child) {
+  border-bottom: 1px solid rgba(187, 187, 187, 0.4);
+}
+.booking-detail .detail-box-btn {
+  user-select: none;
+  overflow: hidden;
+  cursor: pointer;
+  width: 122px;
+  height: 107px;
+  background: #FFFFFF;
+  box-shadow: 0px 3px 6px 1px rgba(104, 151, 177, 0.2);
+  border-radius: 6px 6px 6px 6px;
+}
+.booking-detail .detail-box-btn .btn-img {
+  margin-bottom: 7px;
+  margin-top: 10px;
+  margin-left: 15px;
+  height: 24px;
+}
+.booking-detail .detail-box-btn .btn-text {
+  margin-bottom: 5px;
+  padding: 0 15px;
+  font-size: 16px;
+  font-family: Segoe UI-Semibold, Segoe UI;
+  font-weight: 600;
+  color: #096BCC;
+}
+.booking-detail .detail-box-btn .btn-icon {
+  margin-top: auto;
+  padding: 9px 0;
+  display: flex;
+  justify-content: center;
+  background-color: #f6f6f6;
+}
+.booking-detail .detail-box-btn .btn-icon-img {
+  height: 7px;
+}
+.booking-detail .detail-box-btn-choose {
+  user-select: none;
+  overflow: hidden;
+  cursor: pointer;
+  width: 122px;
+  height: 107px;
+  background: #f6f6f6;
+  border-radius: 6px 6px 6px 6px;
+  border: 2px solid #EEEEEE;
+}
+.booking-detail .detail-box-btn-choose .btn-choose-img {
+  margin-bottom: 7px;
+  margin-top: 10px;
+  margin-left: 15px;
+  height: 24px;
+}
+.booking-detail .detail-box-btn-choose .btn-choose-text {
+  margin-bottom: 5px;
+  padding: 0 15px;
+  font-size: 16px;
+  font-family: Segoe UI-Semibold, Segoe UI;
+  font-weight: 600;
+  color: #7a7a7a;
+}
+.booking-detail .detail-box-btn-choose .btn-choose-icon {
+  margin-top: auto;
+  padding: 9px 0;
+  display: flex;
+  justify-content: center;
+  background-color: #fff;
+}
+.booking-detail .detail-box-btn-choose .btn-choose-icon .btn-choose-icon-img {
+  height: 7px;
+}
+.booking-detail .detail-dwon {
+  display: flex;
+  min-height: 380px;
+  max-height: 400px;
+  box-shadow: 0px 3px 6px 1px rgba(104, 151, 177, 0.2);
+}
+.booking-detail .detail-dwon-left {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  overflow: auto;
+  /* justify-content: center; */
+  width: 0;
+}
+.booking-detail .detail-dwon-left .detail-location {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  background-color: #FFFFFF;
+}
+.booking-detail .detail-dwon-left .detail-location .location-box {
+  display: flex;
+}
+.booking-detail .detail-dwon-left .detail-location .location-box .location-item {
+  position: relative;
+  box-sizing: border-box;
+  width: 50px;
+  font-size: 14px;
+  text-align: center;
+  line-height: 30px;
+  color: transparent;
+  cursor: pointer;
+}
+.booking-detail .detail-dwon-left .detail-location .location-box .location-item-active::before {
+  position: absolute;
+  display: block;
+  content: "";
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 2px solid red;
+}
+.booking-detail .detail-dwon-left .detail-location .location-box .assigned-item {
+  color: #FFFFFF;
+  background: #4472C4;
+}
+.booking-detail .detail-dwon-left .detail-location .location-box .available-item {
+  color: #4472C4;
+  background: #D9E1F2;
+}
+.booking-detail .detail-dwon-left .detail-location .location-box .unavailable-item {
+  color: transparent;
+  background-color: transparent;
+}
+.booking-detail .detail-dwon-left .detail-map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  background-color: #474747;
+  height: 380px;
+}
+.booking-detail .detail-dwon-left .detail-map .preview-img {
+  height: 95%;
+}
+.booking-detail .detail-dwon-right {
+  padding: 0 20px;
+  background-color: #f1f1f1;
+  width: 300px;
+}
+.booking-detail .detail-dwon-right .detail-status {
+  display: flex;
+}
+.booking-detail .detail-dwon-right .detail-status-item {
+  margin: 20px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 12px;
+  font-family: Segoe UI-Semibold, Segoe UI;
+  font-weight: 600;
+  color: #000000;
+}
+.booking-detail .detail-dwon-right .detail-status-item .status-box {
+  margin-bottom: 7px;
+  border-radius: 2px;
+  width: 23px;
+  height: 23px;
+}
+.booking-detail .detail-dwon-right .detail-status-assigned .status-box {
+  background: #4472C4;
+}
+.booking-detail .detail-dwon-right .detail-status-available .status-box {
+  background: #D9E1F2;
+}
+.booking-detail .detail-dwon-right .detail-status-unavailable .status-box {
+  background: #ECECEC;
+}
+.booking-detail .detail-dwon-right .detail-preview {
+  cursor: pointer;
+}
+.booking-detail .detail-dwon-right .detail-preview .preview-img {
+  width: 100%;
+  height: auto;
+}

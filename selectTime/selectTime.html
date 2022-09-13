@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../common/css/init.css">
+    <link rel="stylesheet" href="../common/css/element.css">
+    <link rel="stylesheet" href="./selectTime.css">
+    <link rel="stylesheet" href="../common/css/place-workstation-booking.css">
+    <link rel="stylesheet" href="../common/css/booking-detail.css">
+    <link rel="stylesheet" href="../common/css/booking-confirmation.css">
+    <script src="../common/js/vue.js"></script>
+    <script src="../common/js/element.js"></script>
+    <script src="../common/js/axios.min.js"></script>
+    <script src="../common/js/request.js"></script>
+    <script src="../common/js/commonFn.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div id="app" class="container-box">
+        <div class="header-box">头部</div>
+        <div class="content-box">
+            <!-- 头部导航 -->
+            <div class="h-nav">
+                <!-- mobile头部 -->
+                <div class="h-nav-right mobile-isShow">
+                    <div class="h-nav-arrow-right">
+                        <span>
+                            <img src="../common/img/icon-home.png" alt="">
+                            <a>HOME</a>
+                            <i class="el-icon-arrow-right"></i>
+                        </span>
+                        <span>
+                            <a>LOCATION AND WORKSTATION</a>
+                            <i class="el-icon-arrow-right"></i>
+                        </span>
+                        <span>
+                            <a>DATE/TIME</a>
+                            <i class="el-icon-arrow-right"></i>
+                        </span>
+                        <span>
+                            <a>WORKSTATION GROUP</a>
+                            <i class="el-icon-arrow-right"></i>
+                        </span>
+                        <span>
+                            <a>BOOKING DETAILS</a>
+                            <i class="el-icon-arrow-right"></i>
+                        </span>
+                        <span style="padding-right: 22px;">
+                            <a>BOOKING CONFIRMATION</a>
+                        </span>
+
+                    </div>
+                </div>
+                <div class="h-nav-left">
+                    <div>PLACE WORKSTATION BOOKING​</div>
+                    <div>SELECT DATE AND TIME​</div>
+                    <div class="h-nav-left-set" v-if="navTitleIndex === 2">
+                        <div @click="bookingSetting">
+                            <i class="el-icon-setting"></i>
+                        </div>
+                        <p>Booking Setting</p>
+                    </div>
+                </div>
+                <!-- pc头部 -->
+                <div class="h-nav-right pc-isShow">
+                    <div class="h-nav-arrow-right">
+                        <span v-for="(item, index) in titleArr" :key="index">
+                            <img :src="item.imgUrl" alt="" v-if="item.imgUrl">
+                            <a :class="{'blue-color': navTitleIndex === index}">{{item.name}}</a>
+                            <i class="el-icon-arrow-right" v-if="item.icon"></i>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <!-- 日期选择 -->
+            <div class="main-select-time" v-if="navTitleIndex == 1"
+                :style="{'flex-direction': navTitleIndex == 1?'column':'none'}">
+
+                <div class="header-box"></div>
+                <div class="content-box">
+                    <!--头部导航栏-->
+                    <div class="content-header"></div>
+                    <div class="content-body">
+                        <!--select 地区-->
+                        <div class="choose">
+                            <div class="workstation-title">
+                                DISTRICT
+                            </div>
+                            <el-card class="box-card">
+                                <div v-for="(o,index) in districtData"
+                                    @click="changeDistrict(o.districtId, o.districtName)"
+                                    :class="{'choosed':o.districtId == selectedDistrict}" :key="o.districtId"
+                                    class="text item">
+                                    {{o.districtName}}
+                                    <div class="trigon" v-show="o.districtId == selectedDistrict"></div>
+                                </div>
+                            </el-card>
+                        </div>
+                        <!--select 图书馆-->
+                        <div class="choose">
+                            <div class="workstation-title">
+                                LIBRARY
+                            </div>
+
+                            <el-card class="box-card">
+                                <div slot="header" class="no-choose"
+                                    v-show='!selectedDistrict || libraryData.length==0'>
+                                    <span>Please choose district</span>
+                                </div>
+                                <div v-for="(o,index) in libraryData" @click="changeLibrary(o.libraryId, o.libraryName)"
+                                    :class="{'choosed':o.libraryId == selectedLibrary}" :key="o.libraryId"
+                                    class="text item" v-show='selectedDistrict'>
+                                    {{o.libraryName}}
+                                    <div class="trigon" v-show="o.libraryId == selectedLibrary"></div>
+                                </div>
+                            </el-card>
+                        </div>
+                        <!--工作站类型-->
+                        <div class="choose workstation">
+                            <div class="workstation-title">
+                                WORKSTATION TYPE
+                            </div>
+                            <div class="workstation-type">
+                                <label v-for="(wtitem,index) in workStationTypeData" class="type-radio"
+                                    :class="{'no-choose-type':!selectedLibrary}" :for="'item'+ wtitem.typeId">
+                                    <input type="radio" name="selectedRaaio" :id="'item'+ wtitem.typeId"
+                                        :value="wtitem.typeId" v-show="selectedLibrary" v-model="selectedType">
+                                    <input type="radio" disabled v-show="!selectedLibrary">
+                                    <div class="type-text">
+                                        <p>{{wtitem.typeName}}</p>
+                                        <span>WORKSTATION</span>
+                                    </div>
+                                    <!-- <img src="../static/images/icon-info.png"> -->
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--mobile端下拉选择框-->
+                    <!-- <div class="content-body-mob">
+                        <div class="mob-select">
+                            <template>
+                                <el-select v-model="selectedDistrict" filterable placeholder="DISTRICT"
+                                    change="changeDistrict(item.districtId)">
+                                    <el-option v-for="item in districtData" :key="item.districtId" :label="item.name"
+                                        :value="item.districtId">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </div>
+                        <div class="mob-select ">
+                            <template>
+                                <el-select v-model="selectedLibrary" filterable :disabled="!selectedDistrict"
+                                    placeholder="LIBRARY" change="changeLibrary(item.libraryId)">
+                                    <el-option v-for="item in libraryData" :key="item.libraryId" :label="item.name"
+                                        :value="item.libraryId">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </div>
+                        <div class="mob-select">
+                            <template>
+                                <el-select v-model="selectedType" filterable :disabled="!selectedLibrary"
+                                    placeholder="WORKSTATION TYPE">
+                                    <el-option v-for="item in typeData" :key="item.radioId" :label="item.label"
+                                        :value="item.radioId">
+                                        <span style="float: left; color: #8492a6; font-size: 13px">左</span>
+                                        <div>{{item. label}}</div>
+                                        <span style="float: right; color: #8492a6; font-size: 13px">右</span>
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </div>
+                    </div> -->
+                    <!-- <div class="content-footer">
+                        <a href="../connent/conditions-of-use-index.html">
+                            <button type="button" class="btn-back">
+                                Back
+                                <img class="back-logo" src="../static/images/icon-back.png">
+                            </button>
+                        </a> -->
+                    <!--底部导航栏  -->
+                    <!-- <div class="footer-righht">
+                            <template>
+                                `checked` 为 true 或 false
+                                <el-checkbox v-model="checked">
+                                    I agree the
+                                    <a href="../connent/conditions-of-use.html">
+                                        < Condition of Use>
+                                    </a>
+                                </el-checkbox>
+                            </template>
+                            <a href="#">
+                                <button>
+                                    Next
+                                    <img class="next-logo" src="../static/images/icon-next.png">
+                                </button>
+                               
+                            </a>
+                        </div> -->
+                </div>
+            </div>
+
+            <div class="main-select-time" v-if="navTitleIndex >= 2 && navTitleIndex < 5">
+                <div class="select-time-item pc-isShow">
+                    <div>
+                        <div>
+                            <span>DISTRICT :</span>
+                            <span>{{pitchonData.districtName}}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <span>LIBRARY :</span>
+                            <span>{{pitchonData.libraryName}}</span>
+                        </div>
+                    </div>
+                    <div :class="{'click-right-vanish':isRightVanish}">
+                        <div>
+                            <span>FEATURE & LANGUAGE :</span>
+                            <span v-for="(item, index) in addMoreSelectCheckbox" :key="index">+{{item}}</span>
+                            <span v-for="(item, index) in addMoreSelectRadio" :key="item">+{{item}}</span>
+                        </div>
+                        <a v-if="navTitleIndex === 2" id="moreClick" @click="moreSelect">More <i
+                                :class="{'el-icon-arrow-right': true, 'icon-arrow-right-turn': isRightVanish}"></i></a>
+                        <transition name="el-fade-in-linear">
+                            <div id="more-select" class="more-select" v-if="moreContentShow">
+                                <div>
+                                    <h4>With Computer Feature Selection</h4>
+                                    <div>
+                                        <el-checkbox-group id="more-select-checkbox" v-model="moreSelectCities"
+                                            @change="moreSelectCitiesChange">
+                                            <el-checkbox v-for="city in moreSelectData" :label="city.featureId"
+                                                :key="city.featureId">
+                                                {{city.featureName}}
+                                            </el-checkbox>
+                                        </el-checkbox-group>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4>Workstation Language</h4>
+                                    <div id="more-select-radio">
+                                        <el-radio v-model="moreSelectRadio" :label="item.languageName"
+                                            @change="moreSelectRadioChange(item.languageId)"
+                                            v-for="(item, index) in moreSelectRadioData" :key="item.languageId">
+                                            {{item.languageName}}
+                                        </el-radio>
+                                    </div>
+                                </div>
+                            </div>
+                        </transition>
+
+
+                    </div>
+                    <div v-if="dateAndTiemBox">
+                        <div>
+                            <span>DATE AND TIME OF USE :</span>
+                            <span>{{pitchonData.advancedBookingDate}}</span>
+                            <span>Session 1​ : {{pitchonData.session1Time}}</span>
+                            <span>Session 2 : {{pitchonData.session2Time}}</span>
+                        </div>
+                    </div>
+                    <!-- 底部边框线 -->
+                    <div class="main-select-border-right"></div>
+                </div>
+                <!-- 选择容器 -->
+                <div class="show-time-item nav-item" v-if="navTitleIndex === 2">
+                    <div class="show-time-item-title">
+                        <span>DATE OF USE: </span>
+                        <span v-if="calendarData[0]">{{calendarData[0].yearAndMonth}}</span>
+                    </div>
+                    <div class="show-time-item-calendar">
+                        <div v-for="(item, index) in calendarData" :key="index" @click="calendarSelect(index, item)"
+                            :class="{'select-date': index === selectDateIndex, 'select-gray': item.close}">
+                            <span>
+                                <span>{{item.day}}</span>
+                                <span>{{item.date}}</span>
+                            </span>
+                            <span v-if="item.close || item.holiday">
+                                <span v-if="item.holiday">{{item.holiday}}</span>
+                                <span v-if="item.close">close</span>
+                            </span>
+                            <span v-else>
+                                <span class="selected-color">Selected</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="show-time-item-hour">
+                        <div class="show-hour-item-title">
+                            <span>Session Duration: </span>
+                            <span>Usage the time</span>
+                        </div>
+                        <div class="show-hour-item-hours">
+                            <a v-for="(item, index) in calendarHoursData" :key="index" @click="calendarHoursFn(index)"
+                                :class="{'select-date': index === selectHoursDateIndex}">
+                                {{item}} Hour​
+                            </a>
+                        </div>
+                    </div>
+                    <div class="show-hour-item-timeframe">
+                        <div class="show-timeframe-item-title">
+                            <span>TIME PERIOD: </span>
+                        </div>
+                        <div class="show-timeframe-item-content">
+                            <div>
+                                <div>
+                                    <div v-if="cityOptions1.length != 0">
+                                        <span>
+                                            <span>Morning</span>
+                                        </span>
+                                        <div>
+                                            <el-checkbox-group v-model="checkedCities"
+                                                @change="handleCheckedCitiesChange" id="el-checkbox-group">
+                                                <el-checkbox v-for="city in cityOptions1" :label="city.startTimeSlot"
+                                                    :key="city.startTimeSlot">
+                                                    {{city.startTimeSlot}}</el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </div>
+                                    <div v-if="cityOptions2.length != 0">
+                                        <span>Afternoon</span>
+                                        <div>
+                                            <el-checkbox-group v-model="checkedCities"
+                                                @change="handleCheckedCitiesChange" id="el-checkbox-group">
+                                                <el-checkbox v-for="city in cityOptions2" :label="city.startTimeSlot"
+                                                    :key="city.startTimeSlot" id="el-checkbox">{{city.startTimeSlot}}
+                                                </el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </div>
+                                    <div v-if="cityOptions3.length != 0">
+                                        <span>Night</span>
+                                        <div>
+                                            <el-checkbox-group v-model="checkedCities"
+                                                @change="handleCheckedCitiesChange" id="el-checkbox-group">
+                                                <el-checkbox v-for="city in cityOptions3" :label="city.startTimeSlot"
+                                                    :key="city.startTimeSlot" id="el-checkbox">{{city.startTimeSlot}}
+                                                </el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 信息提示框 -->
+                                <div class="timeframe-messages" v-if="isMes">
+                                    <span>You can only select a maximum of two 1-hours sessions per booking.</span>
+                                    <i class="el-icon-close" @click="timeframeMes"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 遮罩 -->
+                    <transition name="el-fade-in-linear"></transition>
+                    <div class="show-time-item-shade" v-if="moreContentShow"></div>
+                    </transition>
+                </div>
+                <!-- 选择楼层 -->
+                <div class="show-select-floor nav-item" v-if="navTitleIndex === 3">
+                    <div>
+                        <h4>Session 1 : {{pitchonData.session1Time}}</h4>
+                        <p>WORKSTATION GROUP</p>
+                        <div>
+                            <div id="floor-select-radio">
+                                <div :class="{'back-gray': (index + 1) % 2 == 0}"
+                                    v-for="(item, index) in floorSelectRadioData1" :key="item.groupId || index">
+                                    <el-radio v-model="floorSelectRadio" :label="item.groupId"
+                                        @change="floorSelectRadioChange">
+                                        {{(item.floorNum || '') + ' ' + (item.groupName || '')}}</el-radio>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Session 1 : {{pitchonData.session1Time}}</h4>
+                        <p>WORKSTATION GROUP</p>
+                        <div>
+                            <div id="floor-select-radio">
+                                <div :class="{'back-gray': (index + 1) % 2 == 0}"
+                                    v-for="(item, index) in floorSelectRadioData2" :key="item.groupId || index">
+                                    <el-radio v-model="floorSelectRadio1" :label="item.groupId"
+                                        @change="floorSelectRadioChange">
+                                        {{(item.floorNum || '') + ' ' + (item.groupName || '')}}</el-radio>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Booking Detail -->
+                <div class="nav-item" v-if="navTitleIndex === 4" style="background-color: #fff;">
+                    <div class="content-box booking-detail-content">
+                        <div class="booking-detail">
+                            <div class="detail" v-for="(item,index) in bdGroupData">
+                                <div class="detail-title">
+                                    Session {{index+1}} : {{item.timeslot}}
+                                </div>
+                                <div class="detail-box">
+                                    <img src="../common/img/booking/P6-1.png" alt="" class="detail-box-img">
+                                    <div class="detail-box-info">
+                                        <div class="info-box">
+                                            <div class="info-box-label">Workstation Group :</div>
+                                            <div class="info-box-value">{{item.workstationGroup}}</div>
+                                        </div>
+                                        <div class="info-box">
+                                            <div class="info-box-label">Workstation no. :</div>
+                                            <div class="info-box-value">{{item.workstationNo}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="detail-box-btn" v-if="!item.isOpen" @click="openDwonBox(index)">
+                                        <img src="../common/img/booking/click-choose.png" alt="" class="btn-img">
+                                        <div class="btn-text">
+                                            N, select
+                                            <br />
+                                            workstation​
+                                        </div>
+                                        <div class="btn-icon">
+                                            <img src="../common/img/booking/click-choose-down.png" alt=""
+                                                class="btn-icon-img">
+                                        </div>
+                                    </div>
+                                    <div class="detail-box-btn-choose" v-if="item.isOpen" @click="openDwonBox(index)">
+                                        <img src="../common/img/booking/click.png" alt="" class="btn-choose-img">
+                                        <div class="btn-choose-text">
+                                            N, select
+                                            <br />
+                                            workstation​
+                                        </div>
+                                        <div class="btn-choose-icon">
+                                            <img src="../common/img/booking/click-choose-top.png" alt=""
+                                                class="btn-choose-icon-img">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="detail-dwon" v-show="item.isOpen">
+                                    <div class="detail-dwon-left">
+                                        <div class="detail-location" v-show="item.showWhat =='location'">
+                                            <div class="location-box">
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                                <div class="location-cell">
+                                                    <div class="location-item" @click="locationItemChange(index)"
+                                                        v-for="(locationItem,index) in 20"
+                                                        :class="{'assigned-item':true,'available-item':false,'unavailable-item':false,'location-item-active':activeItem == index}">
+                                                        {{index+1}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="detail-map" v-show="item.showWhat == 'map'">
+                                            <img src="../common/img/booking/map-1.png" alt="" class="preview-img">
+                                        </div>
+                                    </div>
+                                    <div class="detail-dwon-right">
+                                        <div class="detail-status">
+                                            <div class="detail-status-item detail-status-assigned">
+                                                <div class="status-box"></div>
+                                                <div>Assigned</div>
+                                            </div>
+                                            <div class="detail-status-item detail-status-available">
+                                                <div class="status-box"></div>
+                                                <div>Available</div>
+                                            </div>
+                                            <div class="detail-status-item detail-status-unavailable">
+                                                <div class="status-box"></div>
+                                                <div>Unavailable</div>
+                                            </div>
+                                        </div>
+                                        <div class="detail-preview" v-show="item.showWhat == 'location'"
+                                            @click="chagneShowWhat('map',index)">
+                                            <img src="../common/img/booking/map-1.png" alt="" class="preview-img">
+                                        </div>
+                                        <div class="detail-preview" v-show="item.showWhat == 'map'"
+                                            @click="chagneShowWhat('location',index)">
+                                            <img src="../common/img/booking/location.jpg" alt="" class="preview-img">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item" v-if="navTitleIndex === 5" style="background-color: #fff;">
+                    <div class="content-box">
+                        <div class="booking-confirmation">
+                            <div class="title">
+                                *You need to claim your booking within
+                                <span class="title-emp"> 10 minutes </span>
+                                before to starts or within
+                                <span class="title-emp"> 10 minutes </span>
+                                after it begins
+                            </div>
+
+                            <div class="content">
+                                <div class="content-info">
+                                    <table class="content-info-table">
+                                        <tr>
+                                            <td class="info-label">BOOKING REFERENCE ID <span class="dwukropek">:</span>
+                                            </td>
+                                            <td class="info-value">
+                                                <div>HKCL-P-20211109-1024</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">LIBRARY <span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>Hong Kong Central Library</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">WORKSTATION GRIOP <span class="dwukropek">:</span>
+                                            </td>
+                                            <td class="info-value">
+                                                <div>6/F LLC Workstation</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">CHOOSE COMPUTER<span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div class="info-value-item">+ Visually Impaired Software</div>
+                                                <div class="info-value-item">+ Adobe CC</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">DATE OF USE <span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>4 oCT 2021</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">TIME OF USE<span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>1 Hour : 10:00-11:00</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">WORKSTATION NO.<span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>2F48</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="content-option">
+                                    <img src="../images/Booking/P6-1.png" class="content-option-img" alt="">
+                                    <div class="content-option-btns">
+                                        <div class="btns-btn btns-print">
+                                            <img src="../images/Booking/icon-print.png" alt="" class="btns-btn-icon">
+                                            Print
+                                        </div>
+                                        <div class="btns-btn btns-save">
+                                            <img src="../images/Booking/icon-save.png" alt="" class="btns-btn-icon">
+                                            Save
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="content-info">
+                                    <table class="content-info-table">
+                                        <tr>
+                                            <td class="info-label">BOOKING REFERENCE ID <span class="dwukropek">:</span>
+                                            </td>
+                                            <td class="info-value">
+                                                <div>HKCL-P-20211109-1024</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">LIBRARY <span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>Hong Kong Central Library</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">WORKSTATION GRIOP <span class="dwukropek">:</span>
+                                            </td>
+                                            <td class="info-value">
+                                                <div>6/F LLC Workstation</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">CHOOSE COMPUTER<span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div class="info-value-item">+ Visually Impaired Software</div>
+                                                <div class="info-value-item">+ Adobe CC</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">DATE OF USE <span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>4 oCT 2021</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">TIME OF USE<span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>1 Hour : 10:00-11:00</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="info-label">WORKSTATION NO.<span class="dwukropek">:</span></td>
+                                            <td class="info-value">
+                                                <div>2F48</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="content-option">
+                                    <img src="../images/Booking/P6-1.png" class="content-option-img" alt="">
+                                    <div class="content-option-btns">
+                                        <div class="btns-btn btns-print">
+                                            <img src="../images/Booking/icon-print.png" alt="" class="btns-btn-icon">
+                                            Print
+                                        </div>
+                                        <div class="btns-btn btns-save">
+                                            <img src="../images/Booking/icon-save.png" alt="" class="btns-btn-icon">
+                                            Save
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="btns">
+                            <div class="btns-box">
+                                <div class="btns-box-btn return-btn">Return to list</div>
+                                <div class="btns-box-btn cancel-btn">Cancel Booking</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-item" v-if="navTitleIndex === 5" style="background-color: #fff;">
+                <div class="content-box">
+                    <div class="booking-confirmation">
+                        <div class="title">
+                            *You need to claim your booking within
+                            <span class="title-emp"> 10 minutes </span>
+                            before to starts or within
+                            <span class="title-emp"> 10 minutes </span>
+                            after it begins
+                        </div>
+
+                        <div class="content">
+                            <div class="content-info">
+                                <table class="content-info-table">
+                                    <tr>
+                                        <td class="info-label">BOOKING REFERENCE ID <span class="dwukropek">:</span>
+                                        </td>
+                                        <td class="info-value">
+                                            <div>HKCL-P-20211109-1024</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">LIBRARY <span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>Hong Kong Central Library</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">WORKSTATION GRIOP <span class="dwukropek">:</span>
+                                        </td>
+                                        <td class="info-value">
+                                            <div>6/F LLC Workstation</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">CHOOSE COMPUTER<span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div class="info-value-item">+ Visually Impaired Software</div>
+                                            <div class="info-value-item">+ Adobe CC</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">DATE OF USE <span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>4 oCT 2021</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">TIME OF USE<span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>1 Hour : 10:00-11:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">WORKSTATION NO.<span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>2F48</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="content-option">
+                                <img src="../images/Booking/P6-1.png" class="content-option-img" alt="">
+                                <div class="content-option-btns">
+                                    <div class="btns-btn btns-print">
+                                        <img src="../images/Booking/icon-print.png" alt="" class="btns-btn-icon">
+                                        Print
+                                    </div>
+                                    <div class="btns-btn btns-save">
+                                        <img src="../images/Booking/icon-save.png" alt="" class="btns-btn-icon">
+                                        Save
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <div class="content-info">
+                                <table class="content-info-table">
+                                    <tr>
+                                        <td class="info-label">BOOKING REFERENCE ID <span class="dwukropek">:</span>
+                                        </td>
+                                        <td class="info-value">
+                                            <div>HKCL-P-20211109-1024</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">LIBRARY <span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>Hong Kong Central Library</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">WORKSTATION GRIOP <span class="dwukropek">:</span>
+                                        </td>
+                                        <td class="info-value">
+                                            <div>6/F LLC Workstation</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">CHOOSE COMPUTER<span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div class="info-value-item">+ Visually Impaired Software</div>
+                                            <div class="info-value-item">+ Adobe CC</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">DATE OF USE <span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>4 oCT 2021</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">TIME OF USE<span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>1 Hour : 10:00-11:00</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="info-label">WORKSTATION NO.<span class="dwukropek">:</span></td>
+                                        <td class="info-value">
+                                            <div>2F48</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="content-option">
+                                <img src="../images/Booking/P6-1.png" class="content-option-img" alt="">
+                                <div class="content-option-btns">
+                                    <div class="btns-btn btns-print">
+                                        <img src="../images/Booking/icon-print.png" alt="" class="btns-btn-icon">
+                                        Print
+                                    </div>
+                                    <div class="btns-btn btns-save">
+                                        <img src="../images/Booking/icon-save.png" alt="" class="btns-btn-icon">
+                                        Save
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btns">
+                        <div class="btns-box">
+                            <div class="btns-box-btn return-btn">Return to list</div>
+                            <div class="btns-box-btn cancel-btn">Cancel Booking</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-button" v-if="navTitleIndex < 5">
+                <div class="nav-button-left">
+                    <el-button id="reset-btn" type="">Reset <i class=""><img class="icon-reset"
+                                src="../common/img/icon-reset.png" alt=""></i>
+                    </el-button>
+                    <el-button id="back-btn" type="" @click="backBtn">Back <img class="icon-reset"
+                            src="../common/img/icon-back.png" alt="">
+                    </el-button>
+                </div>
+                <!--底部导航栏  -->
+                <div class="footer-righht" v-if="navTitleIndex === 1">
+                    <template>
+                        <!-- `checked` 为 true 或 false -->
+                        <el-checkbox v-model="checked" @change="changeChecked" id="iagreethe-checked">
+                            I agree the
+                            <a href="../common/conditions-of-use.html"
+                                style="color:#096BCC; text-decoration: underline;">
+                                < Condition of Use>
+                            </a>
+                        </el-checkbox>
+                    </template>
+                </div>
+                <div :class="{'nav-button-right': true, 'blue-gradual-btn': (nextDisabled && checked), 'cursor-not-allowed': (!nextDisabled && !checked)}"
+                    @click="nextBtn">
+                    <div>
+                        <span>Next</span>
+                        <img src="../common/img/3446.png" alt="" v-if="(nextDisabled && checked)">
+                        <img src="../common/img/icon-next.png" alt="" v-else>
+                    </div>
+                </div>
+                <!-- <div :class="{'nav-button-right': true, 'blue-gradual-btn': nextDisabled}" @click="nextBtn">
+                    <el-button id="next-btn" type="" :disabled="nextDisabled">Next <i class=""><img class="icon-reset"
+                                src="../common/img/icon-next.png" alt=""></i>
+                    </el-button>
+                </div> -->
+            </div>
+            <!-- 预定设置弹窗 -->
+            <el-drawer id="el-drawe-booking-setting" :visible.sync="drawer" direction="btt" :before-close="handleClose"
+                :show-close="false" :withHeader="false">
+                <div class="mobile-booking-setting">
+                    <div>
+                        <span>DISTRICT :</span>
+                        <span>Wan Chai District</span>
+                    </div>
+                    <div>
+                        <span>LIBRARY :</span>
+                        <span>Hong Kong Central Library​</span>
+                    </div>
+                    <div>
+                        <el-collapse accordion id="el-collapse-booking-setting" :accordion="true" v-model="asd">
+                            <el-collapse-item name="1" :disabled="true">
+                                <template slot="title">
+                                    <div class="collapse-slot-title">
+                                        <span>Feature & Language :</span>
+                                        <span>+ Blu-ray Combo Drive​</span>
+                                        </span>
+                                </template>
+                                <div class="more-select">
+                                    <div>
+                                        <h4>With Computer Feature Selection</h4>
+                                        <div>
+                                            <el-checkbox-group id="more-select-checkbox" v-model="moreSelectCities"
+                                                @change="moreSelectCitiesChange">
+                                                <el-checkbox v-for="city in moreSelectData" :label="city.featureId"
+                                                    :key="city.featureId">
+                                                    {{city.typeName}}
+                                                </el-checkbox>
+                                            </el-checkbox-group>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4>Workstation Language</h4>
+                                        <div id="more-select-radio">
+                                            <el-radio v-model="moreSelectRadio" :label="item.languageName"
+                                                @change="moreSelectRadioChange(item.languageId)"
+                                                v-for="(item, index) in moreSelectRadioData" :key="item.languageId">
+                                                {{item.languageName}}
+                                            </el-radio>
+                                        </div>
+                                    </div>
+                                </div>
+                            </el-collapse-item>
+                        </el-collapse>
+                        <!-- 展开收起三角符号 -->
+                        <div class="setting-caret-bottom-box" @click="elCollapseClick">
+                            <i :class="{'el-icon-caret-bottom': true, 'transform-rotatex-180deg': backGray}"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span>DATE AND TIME :</span>
+                        <span>4 Oct 2021​</span>
+                        <span>Session 1: 10:00-11:00 ​</span>
+                        <span>Session 2: 10:00-11:00 ​</span>
+                    </div>
+                    <!-- 关闭弹窗按钮 -->
+                    <div class="mobile-booking-setting-closebox">
+                        <div class="mobile-booking-setting-closebtn" @click="settingCloseBtn">
+                            <i class="el-icon-close"></i>
+                        </div>
+                        <p>Close</p>
+                    </div>
+                </div>
+            </el-drawer>
+        </div>
+    </div>
+
+    <script>
+        //Location and works
+        let locationAndWorks = {
+            typeId: null,
+            libraryId: null,
+        }
+        //Date/Time 
+        let dateTime = {
+
+        }
+        var app = new Vue({
+            el: '#app',
+            created() {
+                this.getLibraryTimeSlotFn()
+                this.selectedAllDistrictVOS()
+                const that = this
+                // 点击空白处选择设备容器消失
+                document.body.addEventListener("click", function (e) {
+                    const more = document.getElementById("moreClick");
+                    const moreBox = document.getElementById("more-select")
+                    if (!moreBox) return
+                    if (!more.contains(e.target) && (!moreBox.contains(e.target))) {
+                        that.moreContentShow = false
+                        that.isRightVanish = false
+                    }
+                })
+            },
+            data: {
+                trueLabel: "",
+                radio: '0',
+                selectedDistrict: '', //选中District
+                selectedLibrary: '',//选中Library
+                selectedType: '',//选中Type
+                checked: false,
+                districtData: [],
+                libraryData: [],
+                workStationTypeData: [],
+                typeData: {},
+                dateAndTiemBox: false,
+                isMes: false,
+                moreSelectCities: [],
+                floorSelectRadio: "",
+                floorSelectRadio1: "",
+                floorSelectRadioData1: [],
+                floorSelectRadioData2: [],
+                navTitleIndex: 1,
+                titleArr: [
+                    {
+                        imgUrl: "../common/img/icon-home.png",
+                        name: "HOME",
+                        icon: true
+                    },
+                    {
+                        name: "LOCATION AND WORKSTATION",
+                        icon: true
+                    },
+                    {
+                        name: "DATE/TIME",
+                        icon: true
+                    },
+                    {
+                        name: "WORKSTATION GROUP",
+                        icon: true
+                    },
+                    {
+                        name: "BOOKING DETAILS",
+                        icon: true
+                    },
+                    {
+                        name: "BOOKING CONFIRMATION",
+                        icon: false
+                    },
+                ],
+                asd: [],
+                backGray: false,
+                drawer: false,
+                addMoreSelectCheckbox: [],
+                addMoreSelectRadio: [],
+                moreSelectRadioData: [],
+                moreSelectRadio: "",
+                moreSelectCitie: [],
+                moreSelectData: [],
+                isRightVanish: false,
+                moreContentShow: false,
+                yetSelectItem: [],
+                calendarHoursData: ["1", "2"],
+                cityOptions: [],
+                cityOptions1: [],
+                cityOptions2: [],
+                cityOptions3: [],
+                checkedCities: [],
+                selectDateIndex: "",
+                selectHoursDateIndex: 0,
+                calendarData: [],
+                isFirst: true,
+                nextDisabled: false,
+                pitchonData: { // 左侧展示的数据
+                    districtName: "",
+                    libraryName: "",
+                    languageId: "",
+                    bookingDateStr: "",
+                    session1Time: "",
+                    session2Time: "",
+                    advancedBookingDate: ""
+                },
+                /**
+                * Booking Detail 
+                */
+                activeItem: null,
+                bdInitData: { //传入参数
+                    libraryId: 42,
+                    typeId: 11,
+                },
+                bdGroupData: [ //群组信息
+                    {
+                        groupId: 68,
+                        advancedBookingDate: "06 September 2022",
+                        timeslot: '10:00-11:00',
+                        workstationGroup: '8/F Reference Library Workstation',
+                        workstationNo: '8F38',
+                        isOpen: false,
+                        showWhat: 'location',
+                    },
+                    {
+                        groupId: null,
+                        advancedBookingDate: "06 September 2022",
+                        timeslot: '14:00-15:00',
+                        workstationGroup: '6/F LLC Workstation',
+                        workstationNo: '6F35',
+                        isOpen: false,
+                        showWhat: 'location',
+                    },
+                ],
+                bdQyeryDefaultWorkstationData: [], //默认工作站数据
+                bdQyeryWorkstationListData: [] //工作站列表数据
+                /**
+                 * Booking Detail end
+                */
+            },
+            mounted() {
+                /**
+                * Booking Detail 
+               */
+                let paramAll = {
+                    "advancedBookingDate": "06 September 2022",
+                    "displayNameLanguage": "",
+                    "featureIds": [],
+                    "languageId": null,
+                    "libraryId": this.bdInitData.libraryId,
+                    "typeId": this.bdInitData.typeId,
+                };
+                let paramByGroudId = {
+                    "advancedBookingDate": "06 September 2022",
+                    "groupId": 68,
+                    "sessionTime": '10:00-11:00',
+                    "typeId": 11
+                }
+                this.bdGroupData.forEach((element, index) => {
+                    paramAll[`session${index + 1}GroupId`] = element.groupId;
+                    paramAll[`session${index + 1}Time`] = element.timeslot;
+                });
+                this.queryDefaultWorkstationApi(paramAll).then(res => {
+                    this.bdQyeryDefaultWorkstationData.push(res.data);
+                });
+                this.queryWorkstationListApi(paramByGroudId).then(res => {
+                    console.log("queryWorkstationListApi:", res)
+                    if (res.code == 200) {
+                        if (res.data.length > 0) {
+                            this.handleXYData(res.data)
+                        }
+                    }
+                });
+                /**
+                 * Booking Detail end
+                */
+            },
+            methods: {
+                changeDistrict(districtId, districtName) {
+                    this.pitchonData.districtName = districtName
+                    this.selectedDistrict = districtId,
+                        this.selectedLibrary = "",
+                        this.selectedType = ""
+                    this.workStationTypeData = []
+                    get(BASE_URL + '/cfm-admin-service/open-api/library/queryLibraryByDistrictId/' + this.selectedDistrict,
+                    ).then(res => {
+                        this.libraryData = res.data;
+                    })
+                },
+
+                changeLibrary(libraryId, libraryName) {
+                    this.selectedLibrary = libraryId,
+                        this.pitchonData.libraryName = libraryName
+                    get(BASE_URL + '/cfm-admin-service/open-api/advancedBooking/getBookingType/', {
+                        libraryId,
+                        libraryCardNumber: "123456"
+                    }
+                    ).then(res => {
+                        this.workStationTypeData = res.data
+                    })
+                },
+
+                changeChecked() {
+                    console.log(this.checked)
+                },
+
+                selectedAllDistrictVOS() {
+                    get(BASE_URL + '/cfm-admin-service/open-api/library/selectAllDistrictVOS').then(res => {
+                        this.districtData = res.data;
+                    })
+                },
+                calendarSelect(index, item) {
+                    this.checkedCities = []
+                    if (item && !item.close) {
+                        let monthEn = item.yearAndMonth && item.yearAndMonth.split(" ")[0]
+                        let monthCh = monthTransitionFn(monthEn)
+                        let year = item.yearAndMonth && item.yearAndMonth.split(" ")[1]
+                        let date = item.date
+                        this.pitchonData.bookingDateStr = year + "-" + monthCh + "-" + date
+                        this.pitchonData.advancedBookingDate = date + " " + item.yearAndMonth
+                        this.selectDateIndex = index
+                        this.getLibraryTimeSlotFn()
+                    }
+
+                },
+                handleCheckedCitiesChange(value) {
+                    console.log(value);
+                    if (this.selectHoursDateIndex === 0) {
+                        if (value.length > 2) {
+                            this.isMes = true
+                            this.checkedCities.pop()
+                        } else {
+                            this.isMes = false
+                        }
+                    } else if (this.selectHoursDateIndex === 1) {
+                        console.log(value);
+                        if (value.length > 2) {
+                            this.isMes = true
+                            value = this.checkedCities.pop()
+                            // return
+                        } else {
+                            this.isMes = false
+                            if (this.isFirst === true) {
+                                const selectIndex = this.cityOptions.findIndex((item) => item.startTimeSlot === value[value.length - 1])
+                                const selectData = this.cityOptions[selectIndex + 1] ?
+                                    this.cityOptions[selectIndex + 1].startTimeSlot :
+                                    this.cityOptions[selectIndex - 1].startTimeSlot
+                                this.checkedCities = [this.cityOptions[selectIndex].startTimeSlot, selectData]
+                                this.isFirst = false
+                            } else {
+                                this.checkedCities = []
+                                this.isFirst = true
+                            }
+
+                        }
+
+                    }
+                    if (this.checkedCities != 0) {
+                        let session1Time = this.checkedCities[0] && this.checkedCities[0].split(":")[0]
+                        let session2Time = this.checkedCities[1] && this.checkedCities[1].split(":")[0]
+                        this.pitchonData.session1Time = `${session1Time}:00-${+session1Time + 1}:00`
+                        this.pitchonData.session2Time = `${session2Time}:00-${+session2Time + 1}:00`
+                        console.log(this.pitchonData.session1Time, this.pitchonData.session2Time);
+                    }
+                },
+                moreSelect() {
+                    this.moreContentShow = !this.moreContentShow
+                    this.isRightVanish = !this.isRightVanish
+                    this.workstationFeatureFn()
+                    this.workstationLanguageFn()
+                },
+                // 分页条件查询工作站功能列表查询
+                workstationFeatureFn() {
+                    workstationFeature({
+                        typeId: this.selectedType,
+                        libraryId: this.selectedLibrary,
+                    }).then(
+                        res => {
+                            const data = res.data
+                            if (data && data.length != 0) {
+                                this.moreSelectData = data
+                            }
+                        }
+                    )
+                },
+
+                // 分页条件查询工作站功能列表查询
+                workstationLanguageFn() {
+                    workstationLanguage({
+                        libraryId: this.selectedLibrary
+                    }).then(
+                        res => {
+                            const data = res.data
+                            if (data && data.length != 0) {
+                                this.moreSelectRadioData = data
+                            }
+                        }
+                    )
+                },
+
+                // 获取提前预定日期时间
+                getDateOfUseFn() {
+                    // 获取日期前把上一次选择标志清空
+                    this.selectDateIndex = ""
+                    getDateOfUse({
+                        libraryId: this.selectedLibrary
+                    }).then(
+                        res => {
+                            const data = res.data
+                            if (data && data.length != 0) {
+                                this.calendarData = data
+                            }
+                        }
+                    )
+                },
+                // 获取提前预定时间区间 
+                getLibraryTimeSlotFn() {
+                    getLibraryTimeSlot(
+                        {
+                            bookingDateStr: this.pitchonData.bookingDateStr,
+                            hour: this.selectHoursDateIndex + 1,
+                            libraryId: this.selectedLibrary,
+                            typeId: this.selectedType
+                        }
+                    ).then(
+                        res => {
+                            const data = res.data
+                            this.cityOptions1 = []
+                            this.cityOptions2 = []
+                            this.cityOptions3 = []
+                            if (data && data.length != 0) {
+                                this.cityOptions = data
+                                this.cityOptions.forEach(item => {
+                                    let hour = item.startTimeSlot.split(":")[0]
+                                    // console.log(hour, hour > 12);
+                                    if (hour < 13) {
+                                        this.cityOptions1.push(item)
+                                    }
+                                    if (13 <= hour && hour < 18) {
+                                        this.cityOptions2.push(item)
+                                    }
+                                    if (18 <= hour) {
+                                        this.cityOptions3.push(item)
+                                    }
+                                })
+                            }
+                        }
+                    )
+                },
+                // 根据筛选条件获取群组
+                queryGroupFn() {
+                    queryGroup(
+                        {
+                            advancedBookingDate: this.pitchonData.advancedBookingDate,
+                            libraryId: this.selectedLibrary,
+                            session1Time: this.pitchonData.session1Time,
+                            session2Time: this.pitchonData.session2Time,
+                            typeId: this.selectedType,
+                            // featureIds: [...this.moreSelectCities],
+                            // languageId: this.pitchonData.languageId,12
+                        }
+                    ).then(
+                        res => {
+                            const data = res.data
+                            if (data && data.length != 0) {
+                                console.log(data);
+                                this.floorSelectRadioData1 = data.session1Group || []
+                                this.floorSelectRadioData2 = data.session2Group || []
+                            }
+                        }
+                    )
+                },
+                moreSelectCitiesChange() {
+                    console.log(this.moreSelectCities);
+                    this.addMoreSelectCheckbox = []
+                    this.moreSelectCities.forEach(element => {
+                        this.moreSelectData.forEach(item => {
+                            if (element === item.featureId) {
+                                this.addMoreSelectCheckbox.push(item.featureName)
+                            }
+                        })
+                    });
+                },
+                moreSelectRadioChange(languageId) {
+                    this.pitchonData.languageId = languageId
+                    this.addMoreSelectRadio = []
+                    this.addMoreSelectRadio.push(this.moreSelectRadio)
+                    console.log([...new Set(this.addMoreSelectRadio)]);
+                },
+                bookingSetting() {
+                    this.drawer = !this.drawer
+                },
+                handleClose() {
+                    this.drawer = false
+                },
+                settingCloseBtn() {
+                    this.drawer = false
+                },
+                elCollapseClick() {
+                    let back = document.querySelector(".el-collapse-item__header")
+                    this.backGray = !this.backGray
+                    back.classList.remove("el-collapse-item__header");
+                    if (this.backGray) {
+                        this.asd.push("1")
+                    } else {
+                        back.classList.remove("el-collapse-item__header");
+                        this.asd = []
+                    }
+                    console.log(back.classList);
+                },
+                nextBtn() {
+                    console.log(this.navTitleIndex);
+                    switch (this.navTitleIndex) {
+                        case 1:
+                            if (this.nextDisabled && this.checked) {
+                                this.navTitleIndex++
+                                this.nextDisabled = false
+                                this.getDateOfUseFn()
+                            }
+                            break
+                        case 2:
+                            if (this.checkedCities.length != 0) {
+                                this.navTitleIndex++
+                                this.nextDisabled = false
+                                this.queryGroupFn()
+                            }
+                            break
+                        case 3:
+                            this.navTitleIndex++
+                            break
+                        case 4:
+                            this.navTitleIndex++
+                            break
+                        case 5:
+                            this.navTitleIndex++
+                            break
+                        default:
+                            break
+                    }
+                    // if (this.navTitleIndex > 3) {
+                    //     this.navTitleIndex = 3
+                    //     this.$message({
+                    //         message: '下一页正在开发',
+                    //         type: 'warning'
+                    //     });
+                    // }
+                },
+                floorSelectRadioChange(val) {
+                    console.log(val);
+                },
+                backBtn() {
+                    this.navTitleIndex--
+                    if (this.navTitleIndex < 1) {
+                        this.navTitleIndex = 1
+                        this.$message({
+                            message: '返回首页',
+                            type: 'warning'
+                        });
+                    }
+                },
+                timeframeMes() {
+                    this.isMes = false
+                },
+                calendarHoursFn(index) {
+                    this.isFirst = true
+                    this.selectHoursDateIndex = index
+                    this.checkedCities = []
+                    this.isMes = false
+                    this.getLibraryTimeSlotFn()
+                },
+                /**
+                 * Booking Detail 
+                */
+                //打开关闭群组下拉框
+                openDwonBox(index) {
+                    this.bdGroupData[index].isOpen = !this.bdGroupData[index].isOpen;
+                },
+                //切换是否显示区域图
+                chagneShowWhat(text, index) {
+                    this.bdGroupData[index].showWhat = text;
+                },
+                //切换选中工作机
+                locationItemChange(index) {
+                    if (this.activeItem != index) {
+                        this.activeItem = index
+                    } else {
+                        this.activeItem = null
+                    }
+                },
+                //根据筛选条件获取默认工作站
+                queryDefaultWorkstationApi(param) {
+                    return new Promise((resolve, reject) => {
+                        queryDefaultWorkstation(param).then(res => {
+                            resolve(res)
+                        })
+                    })
+                },
+                //根据筛选条件获取工作站集合
+                queryWorkstationListApi(param) {
+                    return new Promise((resolve, reject) => {
+                        queryWorkstationList(param).then(res => {
+                            resolve(res)
+                        })
+                    })
+                },
+                //处理坐标数据
+                handleXYData(dataSource) {
+                    let col = [];
+                    let line = [];
+                    let colData = [];
+                    this.bdQyeryWorkstationListData = dataSource;
+                    for (let i = 0; i < dataSource.length; i++) {
+                        let item = dataSource[i];
+                        col.push(item.x)
+                        line.push(item.y)
+                        if (colData[item.x]) {
+                            colData[item.x].push(item);
+                        } else {
+                            colData[item.x] = [item];
+                        }
+                    }
+                    let colMax = Math.max(...col)
+                    let lineMax = Math.max(...line)
+                    for (let x = 0; x < colData.length; x++) {
+                        // colData[x].sort((a,b)=>{return a.y - b})
+                    }
+                    console.log({ colData, col, colMax, lineMax })
+                }
+                /**
+                 * Booking Detail end
+                */
+
+            },
+            computed: {
+                newCheckedCities() {
+                    return JSON.parse(JSON.stringify(this.checkedCities))
+                }
+            },
+            watch: {
+                navTitleIndex(val) {
+                    if (val != 2) {
+                        this.moreContentShow = false
+                        this.isRightVanish = false
+                    }
+                    if (val === 3) {
+                        this.dateAndTiemBox = true
+                    }
+                    if (val === 4) {
+                        /**
+                         * Booking Detail 
+                        */
+                        let paramAll = {
+                            "advancedBookingDate": "06 September 2022",
+                            "displayNameLanguage": "",
+                            "featureIds": [],
+                            "languageId": null,
+                            "libraryId": this.bdInitData.libraryId,
+                            "typeId": this.bdInitData.typeId,
+                        };
+                        let paramByGroudId = {
+                            "advancedBookingDate": "06 September 2022",
+                            "groupId": 68,
+                            "timeslot": '10:00-11:00',
+                            "typeId": 11
+                        }
+                        this.bdGroupData.forEach((element, index) => {
+                            paramAll[`session${index + 1}GroupId`] = element.groupId;
+                            paramAll[`session${index + 1}Time`] = element.timeslot;
+                        });
+                        this.queryDefaultWorkstationApi(paramAll).then(res => {
+                            this.bdQyeryDefaultWorkstationData.push(res.data);
+                        });
+                        this.queryWorkstationListApi(paramByGroudId).then(res => {
+                            if (res.code == 200) {
+                                if (res.data.length > 0) {
+                                    this.handleXYData(res.data)
+                                }
+                            }
+                        });
+                        /**
+                         * Booking Detail end
+                        */
+                    }
+                },
+                selectedType(val) {
+                    if (val != "") {
+                        this.nextDisabled = true
+                    } else {
+                        this.nextDisabled = false
+                    }
+                },
+                newCheckedCities(val) {
+                    console.log(val);
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,226 @@
+/* 顶部工具栏 */
+.h-top {
+    height: 50px;
+    padding: 0 28px;
+    display: flex;
+    background-color: rgba(25, 38, 54, 1);
+    color: rgba(255, 255, 255, 0.9215686274509803);
+    ;
+}
+
+.h-top-2 {
+    position: relative;
+    flex: 2;
+    display: flex;
+    padding-left: 20px;
+    /* justify-content: center; */
+    align-items: center;
+    /* background-color: aquamarine; */
+}
+
+.h-top2-line1 {
+    width: 1px;
+    height: 50%;
+    position: absolute;
+    left: 0px;
+    background-color: #ccc;
+}
+
+.h-top2-line2 {
+    width: 1px;
+    height: 50%;
+    background-color: #ccc;
+    position: absolute;
+    right: 0px;
+}
+
+.h-top2-below {
+    position: absolute;
+    right: 80px;
+}
+
+.h-top-3 {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    /* background-color: bisque; */
+}
+
+.h-top-4 {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.h-top4-img {
+    width: 100%;
+    /* position: absolute; */
+    text-align: center;
+}
+
+.h-top-5 {
+    flex: 1;
+    display: flex;
+    position: relative;
+    text-align: center;
+    align-items: center;
+}
+
+.h-top5-below {
+    position: absolute;
+    right: 30px;
+}
+
+.h-top5-img {
+    width: 100%;
+    text-align: center;
+}
+
+/* 顶部导航栏 */
+.h-nav {
+    display: flex;
+    height: 116px;
+    background-color: #fefefe;
+}
+
+.h-nav-item1 {
+    padding-left: 20px;
+    flex: 1;
+    line-height: 116px;
+}
+
+.h-nav-item2 {
+    display: flex;
+    width: 800px;
+    font-family: 'Roboto Medium', 'Roboto', sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 25px;
+    color: #6F500A;
+}
+
+.h-navItem {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 50px;
+}
+
+.h-navImg {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+.h-biasImg {
+    position: absolute;
+    right: -62.5px;
+    -webkit-transform: rotate(101.18129891306128deg);
+}
+
+.h-nav-item3 {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-left: 50px;
+    padding-right: 25px;
+    font-family: 'Arial Bold', 'Arial', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+.h-navItem3-title {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.h-navItem3-search {
+    flex: 1;
+}
+
+.advanced-search {
+    text-decoration: underline;
+}
+
+.h-navItem3-night {
+    display: flex;
+    align-items: center;
+}
+
+/* 移动端顶部导航栏 */
+.h-nav-mobile {
+    display: none;
+    justify-content: flex-end;
+    padding-right: 50px;
+}
+
+.mobile-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    margin: 25px;
+}
+
+.mobile-icon-search {
+    position: absolute;
+}
+
+.mobile-icon-fold {
+    position: absolute;
+    color: #FFFFFF;
+}
+
+/* 媒体查询 */
+
+/* 在小于或等于 1500  */
+@media screen and (max-width: 1500px) {
+    .h-nav-item2 {
+        /* width: 600px; */
+    }
+}
+
+/* 在小于或等于 1200  */
+@media screen and (max-width: 1200px) {
+    .h-top {
+        display: none;
+    }
+
+    .h-nav-item2 {
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+    .h-nav-item3 {
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+}
+
+/* 在小于或等于 1000  */
+@media screen and (max-width: 1000px) {
+    .h-nav-mobile {
+        display: block;
+        flex: 1;
+        display: flex;
+    }
+
+    .h-nav-item2 {
+        display: none;
+    }
+
+    .h-nav-item3 {
+        display: none;
+    }
+}
